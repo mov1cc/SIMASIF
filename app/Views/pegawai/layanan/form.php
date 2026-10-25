@@ -3,7 +3,7 @@ use App\Core\Session;
 use App\Helpers\CsrfHelper;
 use App\Helpers\FormatHelper as F;
 
-/** @var array|null*/
+/** @var array|null */
 /** @var string */
 
 $errors = Session::flash('errors') ?? [];
@@ -11,6 +11,7 @@ $old    = Session::flash('old') ?? [];
 
 $isEdit = $layanan !== null;
 $title  = $isEdit ? 'Edit Layanan' : 'Tambah Layanan';
+
 
 $nilai = fn (string $key) => $old[$key] ?? ($layanan[$key] ?? '');
 
@@ -51,10 +52,16 @@ ob_start();
                     </div>
 
                     <div class="mb-3">
-                        <label for="deskripsi" class="form-label">Deskripsi</label>
-                        <textarea id="deskripsi" name="deskripsi" rows="3"
-                                  class="form-control"><?= F::e($nilai('deskripsi')) ?></textarea>
-                    </div>
+    <label for="deskripsi" class="form-label">Deskripsi</label>
+
+    <textarea id="deskripsi" name="deskripsi" rows="4"
+              class="form-control"><?= F::e($nilai('deskripsi')) ?></textarea>
+
+    <div class="form-text">
+        Satu baris = satu poin deliverables di kartu layanan
+        (contoh: &quot;10 file edit high-res&quot;).
+    </div>
+</div>
 
                     <div class="row">
                         <div class="col-md-6 mb-3">

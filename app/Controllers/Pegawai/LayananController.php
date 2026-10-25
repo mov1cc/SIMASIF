@@ -22,8 +22,9 @@ class LayananController extends Controller
     public function index(): void
     {
         $this->render('pegawai/layanan/index', [
-            'title' => 'Data Layanan',
+            'title' => 'Katalog Layanan',
             'items' => $this->layanan->all(),
+            'stat'  => $this->layanan->statistikBulanIni(),
         ]);
     }
 
@@ -110,6 +111,27 @@ class LayananController extends Controller
                 throw $e;
             }
         }
+
+        $this->redirect('/pegawai/layanan');
+    }
+
+    public function toggle(): void
+    {
+        $this->verifyCsrf();
+
+        $id  = (int) Request::post('id', 0);
+        $row = $this->findOrFail($id);
+
+        $aktif = Request::post('is_active') !== null;
+
+        $this->layanan->setActive($id, $aktif);
+
+        Session::flash(
+            'success',
+            'Layanan "' . $row['nama'] . '" '
+            . ($aktif ? 'ditampilkan di' : 'disembunyikan dari')
+            . ' portal publik.'
+        );
 
         $this->redirect('/pegawai/layanan');
     }

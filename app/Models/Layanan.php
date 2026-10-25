@@ -7,7 +7,7 @@ use App\Core\Model;
 class Layanan extends Model
 {
     protected string $table = 'layanan';
-
+    
     public function all(): array
     {
         return $this->query(
@@ -28,7 +28,7 @@ class Layanan extends Model
     }
 
     /**
-     * @param array{nama:string
+     * @param array{nama:string, deskripsi:string, harga:string, estimasi_durasi_menit:string, is_active:bool} $data
      */
     public function create(array $data): int
     {
@@ -57,12 +57,79 @@ class Layanan extends Model
         );
     }
 
+
     public function delete(int $id): bool
     {
         return $this->execute(
             "DELETE FROM layanan WHERE id = ?",
             [$id]
         );
+    }
+
+    public function setActive(int $id, bool $aktif): bool
+    {
+        return $this->execute(
+            "UPDATE layanan SET is_active = ? WHERE id = ?",
+            [$aktif ? 'true' : 'false', $id]
+        );
+    }
+
+    /**
+     * @return array{top:?array
+     */
+    public function statistikBulanIni(): array
+    {
+        $rows = $this->query(
+            "SELECT l.id, l.nama,
+                    COUNT(p.id) AS sesi,
+                    COALESCE(SUM(
+                        CASE WHEN t.status_pembayaran = 'lunas'
+                             THEN p.total_tagihan ELSE 0 END
+                    ), 0) AS omzet
+               FROM layanan l
+               LEFT JOIN pemesanan p
+                      ON p.layanan_id = l.id
+                     AND p.created_at >= date_trunc('month', NOW())
+                     AND p.created_at <  date_trunc('month', NOW()) + INTERVAL '1 month'
+               LEFT JOIN transaksi_pembayaran t ON t.pemesanan_id = p.id
+              WHERE l.is_active = TRUE
+              GROUP BY l.id, l.nama
+              ORDER BY sesi DESC, omzet DESC, l.nama ASC"
+        );
+
+        $totalRow = $this->first(
+            "SELECT COALESCE(SUM(p.total_tagihan), 0) AS total
+               FROM pemesanan p
+               JOIN transaksi_pembayaran t ON t.pemesanan_id = p.id
+              WHERE t.status_pembayaran = 'lunas'
+                AND p.created_at >= date_trunc('month', NOW())
+                AND p.created_at <  date_trunc('month', NOW()) + INTERVAL '1 month'"
+        );
+
+        $rows = array_map(fn (array $r) => [
+            'id'    => (int) $r['id'],
+            'nama'  => $r['nama'],
+            'sesi'  => (int) $r['sesi'],
+            'omzet' => (float) $r['omzet'],
+        ], $rows);
+
+        $top      = null;
+        $terendah = null;
+
+        if (!empty($rows) && $rows[0]['sesi'] > 0) {
+            $top = $rows[0];
+
+            $terakhir = end($rows);
+            if ($terakhir['id'] !== $top['id']) {
+                $terendah = $terakhir;
+            }
+        }
+
+        return [
+            'top'         => $top,
+            'terendah'    => $terendah,
+            'total_omzet' => (float) ($totalRow['total'] ?? 0),
+        ];
     }
 
     private function toParams(array $data): array
