@@ -1,14 +1,10 @@
 <?php
 
-declare(strict_types=1);
+use App\Middlewares\AuthMiddleware;
 
-use App\Controllers\Guest\AuthController;
+$router->get('/login', 'AuthController@showLoginForm');
+$router->post('/login', 'AuthController@login');
 
-/** @var \App\Core\Router $router */
-
-$router->group(['middleware' => ['guest']], function ($r): void {
-    $r->get('/login', [AuthController::class, 'showLogin']);
-    $r->post('/login', [AuthController::class, 'login']);
-});
-
-$router->post('/logout', [AuthController::class, 'logout'], ['auth']);
+$router->post('/logout', 'AuthController@logout', [
+    AuthMiddleware::class,
+]);

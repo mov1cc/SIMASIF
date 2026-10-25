@@ -1,16 +1,12 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Middlewares;
 
-use App\Core\Auth;
 use App\Core\Middleware;
-use App\Core\Request;
 use App\Core\Response;
-use App\Exceptions\ForbiddenException;
+use App\Core\Session;
 
-final class RoleMiddleware implements Middleware
+class RoleMiddleware implements Middleware
 {
     /** @var string[] */
     private array $roles;
@@ -20,12 +16,16 @@ final class RoleMiddleware implements Middleware
         $this->roles = $roles;
     }
 
-    public function handle(Request $request, callable $next): Response
+    public function handle(): void
     {
-        if (!Auth::hasRole(...$this->roles)) {
-            throw new ForbiddenException();
+
+        if (!Session::has('user_id')) {
+            Session::flash('error', 'Silakan login terlebih dahulu.');
+            Response::redirect('/login');
         }
 
-        return $next($request);
+        if (!in_array(Session::get('role'), $this->roles, true)) {
+            throw new \Exception('Akses ditolak.', 403);
+        }
     }
 }

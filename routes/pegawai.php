@@ -1,10 +1,9 @@
 <?php
 
-declare(strict_types=1);
+use App\Middlewares\AuthMiddleware;
+use App\Middlewares\RoleMiddleware;
 
-/** @var \App\Core\Router $router */
-
-$router->group(['prefix' => '/pegawai', 'middleware' => ['auth', 'role:pegawai']], function ($r): void {
-    
-    $r->get('/dashboard', fn () => view('dashboard', ['title' => 'Dashboard Pegawai', 'heading' => 'Dashboard Pegawai']));
-});
+$router->get('/pegawai/dashboard', 'Pegawai\DashboardController@index', [
+    AuthMiddleware::class,
+    RoleMiddleware::class . ':pegawai',
+]);

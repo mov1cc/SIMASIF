@@ -1,10 +1,16 @@
 <?php
 
-declare(strict_types=1);
+use App\Core\Router;
 
-/** @var \App\Core\Router $router */
+$router = new Router();
 
-require __DIR__ . '/guest.php';
-require __DIR__ . '/auth.php';
-require __DIR__ . '/pegawai.php';
-require __DIR__ . '/owner.php';
+$router->get(
+    '/test',
+    'TestController@index'
+);
+
+require BASE_PATH . '/routes/auth.php';
+require BASE_PATH . '/routes/owner.php';
+require BASE_PATH . '/routes/pegawai.php';
+
+return $router;

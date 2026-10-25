@@ -1,10 +1,9 @@
 <?php
 
-declare(strict_types=1);
+use App\Middlewares\AuthMiddleware;
+use App\Middlewares\RoleMiddleware;
 
-/** @var \App\Core\Router $router */
-
-$router->group(['prefix' => '/owner', 'middleware' => ['auth', 'role:owner']], function ($r): void {
-    
-    $r->get('/dashboard', fn () => view('dashboard', ['title' => 'Dashboard Owner', 'heading' => 'Dashboard Owner']));
-});
+$router->get('/owner/dashboard', 'Owner\DashboardController@index', [
+    AuthMiddleware::class,
+    RoleMiddleware::class . ':owner',
+]);
