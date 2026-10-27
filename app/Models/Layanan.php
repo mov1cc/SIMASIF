@@ -7,7 +7,10 @@ use App\Core\Model;
 class Layanan extends Model
 {
     protected string $table = 'layanan';
-    
+
+    /**
+     * Semua layanan (untuk halaman pegawai): aktif dulu, lalu urut nama
+     */
     public function all(): array
     {
         return $this->query(
@@ -15,6 +18,9 @@ class Layanan extends Model
         );
     }
 
+    /**
+     * Hanya layanan aktif (dipakai halaman publik di Tahap 6)
+     */
     public function findActive(): array
     {
         return $this->query(
@@ -22,12 +28,29 @@ class Layanan extends Model
         );
     }
 
+        /**
+     * Satu layanan aktif berdasarkan ID (dipakai halaman detail publik).
+     * Mengembalikan null kalau tidak ada ATAU layanan nonaktif.
+     */
+    public function findActiveById(int $id): ?array
+    {
+        return $this->first(
+            "SELECT * FROM layanan WHERE id = ? AND is_active = TRUE LIMIT 1",
+            [$id]
+        );
+    }
+
+    /**
+     * Cari berdasarkan ID (membuka visibilitas find() milik base Model)
+     */
     public function find(int $id): ?array
     {
         return parent::find($id);
     }
 
     /**
+     * Tambah layanan baru, mengembalikan ID baru
+     *
      * @param array{nama:string, deskripsi:string, harga:string, estimasi_durasi_menit:string, is_active:bool} $data
      */
     public function create(array $data): int
@@ -43,6 +66,9 @@ class Layanan extends Model
         return (int) $row['id'];
     }
 
+    /**
+     * Perbarui layanan (updated_at diurus trigger database)
+     */
     public function update(int $id, array $data): bool
     {
         return $this->execute(
@@ -57,7 +83,11 @@ class Layanan extends Model
         );
     }
 
-
+    /**
+     * Hapus layanan.
+     * Akan melempar PDOException (SQLSTATE 23503) kalau layanan
+     * sudah dipakai pemesanan (FK ON DELETE RESTRICT).
+     */
     public function delete(int $id): bool
     {
         return $this->execute(
@@ -66,6 +96,9 @@ class Layanan extends Model
         );
     }
 
+        /**
+     * Ubah status aktif/nonaktif saja (dipakai switch di kartu layanan)
+     */
     public function setActive(int $id, bool $aktif): bool
     {
         return $this->execute(
@@ -75,7 +108,13 @@ class Layanan extends Model
     }
 
     /**
-     * @return array{top:?array
+     * Statistik bulan berjalan untuk kartu di halaman katalog.
+     *
+     * - top       : layanan aktif dengan sesi dipesan terbanyak (null kalau belum ada pemesanan)
+     * - terendah  : layanan aktif dengan sesi dipesan paling sedikit (null kalau tidak ada pembanding)
+     * - total_omzet: total tagihan pemesanan berstatus pembayaran 'lunas' bulan ini
+     *
+     * @return array{top:?array, terendah:?array, total_omzet:float}
      */
     public function statistikBulanIni(): array
     {
@@ -132,6 +171,9 @@ class Layanan extends Model
         ];
     }
 
+    /**
+     * Ubah input form menjadi urutan parameter query
+     */
     private function toParams(array $data): array
     {
         return [

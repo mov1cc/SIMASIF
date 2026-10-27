@@ -1,24 +1,10 @@
 <?php
 
-declare(strict_types=1);
+// Halaman publik: TANPA middleware (akses bebas tanpa login)
 
-use App\Controllers\Guest\HomeController;
-use App\Core\Database;
+// Beranda sementara = daftar layanan
+$router->get('/', 'Guest\LayananController@index');
 
-/** @var \App\Core\Router $router */
-
-$router->get('/', [HomeController::class, 'index']);
-
-if (config('app.debug')) {
-    $router->get('/ping', fn (): array => [
-        'status' => 'ok',
-        'app'    => config('app.name'),
-        'time'   => date('c'),
-    ]);
-
-    $router->get('/db-check', function (): array {
-        $row = Database::fetch('SELECT version() AS version');
-
-        return ['database' => 'terhubung', 'version' => $row['version'] ?? null];
-    });
-}
+// Layanan (Tahap 6)
+$router->get('/layanan',        'Guest\LayananController@index');
+$router->get('/layanan/detail', 'Guest\LayananController@detail');
