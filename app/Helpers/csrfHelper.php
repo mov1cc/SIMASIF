@@ -16,10 +16,7 @@ class CsrfHelper
 
         return Session::get(self::KEY);
     }
-
-    /**
-     * Input hidden siap pakai di form
-     */
+    
     public static function field(): string
     {
         return '<input type="hidden" name="_csrf" value="'

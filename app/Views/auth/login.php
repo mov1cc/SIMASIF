@@ -1,92 +1,95 @@
 <?php
-
-namespace App\Services;
-
 use App\Core\Session;
-use App\Models\User;
+use App\Helpers\CsrfHelper;
 
-class AuthService
-{
-    private User $users;
+$errors = Session::flash('errors') ?? [];
+$old    = Session::flash('old') ?? [];
 
-    public function __construct()
-    {
-        $this->users = new User();
-    }
+$title = 'Login';
 
-    /**
-     * @return array{success
-     */
-    public function attemptLogin(string $email, string $password): array
-    {
-        $email = strtolower(trim($email));
+ob_start();
+?>
 
-        $user = $this->users->findByEmail($email);
+<div class="row justify-content-center">
+    <div class="col-md-5 col-lg-4">
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
 
-        $hash = $user['password'] ?? password_hash('dummy-password', PASSWORD_BCRYPT);
-        $passwordOk = password_verify($password, $hash);
+                <h4 class="mb-1">Login</h4>
+                <p class="text-muted small mb-4">Khusus Owner dan Pegawai Studio Flamboyan.</p>
 
-        if ($user === null || !$passwordOk) {
-            return [
-                'success' => false,
-                'message' => 'Email atau password salah.',
-            ];
-        }
+                <form action="/login" method="POST" novalidate>
+                    <?= CsrfHelper::field() ?>
 
-        if (!$user['is_active']) {
-            return [
-                'success' => false,
-                'message' => 'Akun Anda dinonaktifkan. Hubungi owner.',
-            ];
-        }
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            class="form-control <?= isset($errors['email']) ? 'is-invalid' : '' ?>"
+                            value="<?= htmlspecialchars($old['email'] ?? '', ENT_QUOTES, 'UTF-8') ?>"
+                            autofocus
+                        >
+                        <?php if (isset($errors['email'])): ?>
+                            <div class="invalid-feedback">
+                                <?= htmlspecialchars($errors['email'], ENT_QUOTES, 'UTF-8') ?>
+                            </div>
+                        <?php endif; ?>
+                    </div>
 
-        $this->startSession($user);
+                    <div class="mb-4">
+                        <label for="password" class="form-label">Password</label>
+                        <div class="input-group">
+                            <input
+                                type="password"
+                                id="password"
+                                name="password"
+                                class="form-control <?= isset($errors['password']) ? 'is-invalid' : '' ?>"
+                            >
 
-        $this->users->updateLastLogin((int) $user['id']);
+                            <button 
+                                type="button"
+                                class="btn btn-outline-secondary"
+                                id="togglePassword"
+                                aria-label="Tampilkan password"
+                            >
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </div>
+                        <?php if (isset($errors['password'])): ?>
+                            <div class="invalid-feedback">
+                                <?= htmlspecialchars($errors['password'], ENT_QUOTES, 'UTF-8') ?>
+                            </div>
+                        <?php endif; ?>
+                    </div>
 
-        return [
-            'success' => true,
-            'message' => 'Login berhasil.',
-            'role'    => $user['role'],
-        ];
-    }
+                    <button type="submit" class="btn btn-primary w-100">Masuk</button>
+                </form>
 
-    
-    private function startSession(array $user): void
-    {
-        
-        Session::regenerate();
+            </div>
+        </div>
+    </div>
+</div>
 
-        Session::set('user_id', (int) $user['id']);
-        Session::set('nama', $user['nama']);
-        Session::set('email', $user['email']);
-        Session::set('role', $user['role']);
-    }
+<script>
+const togglePassword = document.querySelector('#togglePassword');
+const password = document.querySelector('#password');
+const icon = togglePassword.querySelector('i');
 
-    
-    public function logout(): void
-    {
-        Session::destroy();
+togglePassword.addEventListener('click', function () {
 
-        session_start();
-    }
+    const isPassword = password.type === 'password';
 
-    public function check(): bool
-    {
-        return Session::has('user_id');
-    }
+    password.type = isPassword ? 'text' : 'password';
 
-    public function role(): ?string
-    {
-        return Session::get('role');
-    }
+    icon.classList.toggle('bi-eye');
+    icon.classList.toggle('bi-eye-slash');
 
-    public static function dashboardPath(?string $role): string
-    {
-        return match ($role) {
-            ROLE_OWNER   => '/owner/dashboard',
-            ROLE_PEGAWAI => '/pegawai/dashboard',
-            default      => '/login',
-        };
-    }
-}
+});
+</script>
+
+<?php
+$content = ob_get_clean();
+
+require dirname(__DIR__) . '/layouts/guest.php';
