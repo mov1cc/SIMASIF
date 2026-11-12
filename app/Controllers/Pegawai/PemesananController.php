@@ -6,6 +6,7 @@ use App\Core\Controller;
 use App\Core\Request;
 use App\Helpers\FormatHelper;
 use App\Models\Pemesanan;
+use App\Services\WorkflowService;
 
 class PemesananController extends Controller
 {
@@ -56,11 +57,12 @@ class PemesananController extends Controller
             throw new \Exception('Pemesanan tidak ditemukan.', 404);
         }
         $this->render('pegawai/pemesanan/detail', [
-            'title'    => 'Detail ' . $row['kode_unik'],
-            'p'        => $row,
-            'riwayat'  => $this->pemesanan->riwayatWorkflow($id),
-            'addons'   => $this->pemesanan->addonDipesan($id),
-        ]);
+    'title'    => 'Detail ' . $row['kode_unik'],
+    'p'        => $row,
+    'riwayat'  => $this->pemesanan->riwayatWorkflow($id),
+    'addons'   => $this->pemesanan->addonDipesan($id),
+    'next'     => WorkflowService::statusBerikutnya($row['status']),
+]);
     }
 
     // ------------------------------------------------------------------

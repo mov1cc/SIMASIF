@@ -17,3 +17,9 @@ $router->post('/pemesanan/store',      'Guest\PemesananController@store');
 $router->get('/pemesanan/konfirmasi',  'Guest\PemesananController@konfirmasi', [
     KodeUnikMiddleware::class,
 ]);
+
+// Tracking (Tahap 9)
+$router->get('/tracking',      'Guest\TrackingController@index');
+$router->get('/tracking/data', 'Guest\TrackingController@data', [
+    KodeUnikMiddleware::class,
+]);

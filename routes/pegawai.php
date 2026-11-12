@@ -47,3 +47,7 @@ $router->post('/pegawai/pelanggan/delete',  'Pegawai\PelangganController@destroy
 $router->get('/pegawai/pemesanan',         'Pegawai\PemesananController@index',  $pegawai);
 $router->get('/pegawai/pemesanan/detail',  'Pegawai\PemesananController@detail', $pegawai);
 $router->get('/pegawai/jadwal',            'Pegawai\JadwalController@index',     $pegawai);
+
+// Workflow (Tahap 9)
+$router->get('/pegawai/workflow',         'Pegawai\WorkflowController@index',        $pegawai);
+$router->post('/pegawai/workflow/update', 'Pegawai\WorkflowController@updateStatus', $pegawai);

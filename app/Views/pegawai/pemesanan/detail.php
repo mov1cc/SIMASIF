@@ -1,6 +1,7 @@
 <?php
 use App\Helpers\FormatHelper as F;
-
+use App\Helpers\CsrfHelper;
+/** @var string|null $next */
 /** @var array $p */
 /** @var array $riwayat */
 /** @var array $addons */
@@ -213,6 +214,42 @@ ob_start();
 
     </div>
         <div class="col-lg-5">
+    <div class="card shadow-sm mb-3">
+    <div class="card-header bg-white fw-semibold">Ubah Status</div>
+    <div class="card-body">
+
+        <?php if ($next === null): ?>
+            <p class="text-success mb-0">
+                <i class="bi bi-check-circle-fill"></i> Layanan sudah selesai.
+            </p>
+        <?php else: ?>
+            <p class="small text-muted">
+                Status saat ini: <strong><?= F::e(F::statusPemesanan($p['status'])) ?></strong><br>
+                Tahap berikutnya: <strong><?= F::e(F::statusPemesanan($next)) ?></strong>
+            </p>
+
+            <form action="/pegawai/workflow/update" method="POST">
+                <?= CsrfHelper::field() ?>
+                <input type="hidden" name="id" value="<?= (int) $p['id'] ?>">
+                <input type="hidden" name="status" value="<?= F::e($next) ?>">
+                <input type="hidden" name="kembali" value="detail">
+
+                <div class="mb-3">
+                    <label for="catatan" class="form-label">
+                        Catatan <span class="text-muted">(opsional)</span>
+                    </label>
+                    <textarea id="catatan" name="catatan" rows="2" maxlength="500"
+                              class="form-control"></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-dark w-100">
+                    Lanjut ke <?= F::e(F::statusPemesanan($next)) ?>
+                </button>
+            </form>
+        <?php endif; ?>
+
+    </div>
+</div>
 
         <div class="card shadow-sm">
 
