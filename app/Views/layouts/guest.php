@@ -18,6 +18,10 @@
                 <li class="nav-item">
                     <a class="nav-link" href="/layanan">Layanan</a>
                 </li>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/tracking">Lacak Pesanan</a>
+                </li>
                 <li class="nav-item">
                     <a class="nav-link text-muted" href="/login">Login Staf</a>
                 </li>

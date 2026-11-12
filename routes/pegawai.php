@@ -51,3 +51,9 @@ $router->get('/pegawai/jadwal',            'Pegawai\JadwalController@index',    
 // Workflow (Tahap 9)
 $router->get('/pegawai/workflow',         'Pegawai\WorkflowController@index',        $pegawai);
 $router->post('/pegawai/workflow/update', 'Pegawai\WorkflowController@updateStatus', $pegawai);
+
+// Transaksi Pembayaran (Tahap 10)
+$router->get('/pegawai/transaksi',          'Pegawai\TransaksiController@index',  $pegawai);
+$router->get('/pegawai/transaksi/bukti',    'Pegawai\TransaksiController@bukti',  $pegawai);
+$router->post('/pegawai/transaksi/verify',  'Pegawai\TransaksiController@verify', $pegawai);
+$router->post('/pegawai/transaksi/reject',  'Pegawai\TransaksiController@reject', $pegawai);

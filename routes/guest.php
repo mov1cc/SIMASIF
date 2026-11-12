@@ -23,3 +23,11 @@ $router->get('/tracking',      'Guest\TrackingController@index');
 $router->get('/tracking/data', 'Guest\TrackingController@data', [
     KodeUnikMiddleware::class,
 ]);
+
+// Pembayaran (Tahap 10)
+$router->get('/pembayaran',         'Guest\PembayaranController@showForm', [
+    KodeUnikMiddleware::class,
+]);
+$router->post('/pembayaran/upload', 'Guest\PembayaranController@uploadBukti', [
+    KodeUnikMiddleware::class,
+]);

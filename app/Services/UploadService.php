@@ -11,6 +11,14 @@ class UploadService
         'image/webp' => 'webp',
     ];
 
+        /** MIME bukti pembayaran: gambar atau PDF */
+    public const MIME_BUKTI = [
+        'image/jpeg'      => 'jpg',
+        'image/png'       => 'png',
+        'image/webp'      => 'webp',
+        'application/pdf' => 'pdf',
+    ];
+
     /**
      * Validasi dan simpan satu file upload.
      *

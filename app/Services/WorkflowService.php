@@ -6,6 +6,7 @@ use App\Core\Database;
 use App\Helpers\FormatHelper;
 use App\Models\WorkflowLayanan;
 use PDO;
+use App\Models\TransaksiPembayaran;
 
 class WorkflowService
 {
@@ -119,7 +120,18 @@ class WorkflowService
                 ));
             }
 
-            // Tahap 10: kalau $berikutnya === 'pembayaran_diverifikasi', di sini
+                        // Tahap 10: tidak boleh masuk "pembayaran diverifikasi" sebelum transaksi lunas
+            if ($berikutnya === STATUS_PEMBAYARAN_DIVERIFIKASI) {
+                $trx = (new TransaksiPembayaran())->findByPemesanan($pemesananId);
+
+                if ($trx === null || $trx['status_pembayaran'] !== STATUS_LUNAS) {
+                    $this->db->rollBack();
+
+                    return $this->gagal(
+                        'Pembayaran belum diverifikasi lunas. Verifikasi dulu lewat menu Transaksi.'
+                    );
+                }
+            }
             // tambahkan syarat transaksi berstatus 'lunas'.
 
             $this->workflow->ubahStatusPemesanan($pemesananId, $berikutnya, $userId);

@@ -98,6 +98,25 @@ ob_start();
             </div>
         </div>
 
+                <!-- Pembayaran -->
+        <?php $sb = $pemesanan['status_pembayaran'] ?? null; ?>
+        <div class="card shadow-sm mb-3">
+            <div class="card-header bg-white fw-semibold">Pembayaran</div>
+            <div class="card-body d-flex flex-wrap justify-content-between align-items-center gap-2">
+                <span class="badge text-bg-<?= F::e(F::statusPembayaranBadge($sb)) ?>">
+                    <?= F::e(F::statusPembayaran($sb)) ?>
+                </span>
+
+                <?php if ($sb === null || $sb === 'ditolak'): ?>
+                    <a href="/pembayaran?kode=<?= F::e(urlencode($pemesanan['kode_unik'])) ?>"
+                       class="btn btn-dark btn-sm">
+                        <i class="bi bi-wallet2"></i>
+                        <?= $sb === 'ditolak' ? 'Kirim Ulang Bukti' : 'Bayar Sekarang' ?>
+                    </a>
+                <?php endif; ?>
+            </div>
+        </div>
+
         <!-- Hasil foto (tombol unduh ditambahkan di Tahap 11) -->
         <div class="card shadow-sm mb-3">
             <div class="card-header bg-white fw-semibold">Hasil Foto</div>

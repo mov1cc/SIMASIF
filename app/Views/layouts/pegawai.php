@@ -31,10 +31,6 @@ $uri = Request::uri();
                 <li class="nav-item">
                     <a class="nav-link <?= str_starts_with($uri, '/pegawai/layanan') ? 'active' : '' ?>"
                        href="/pegawai/layanan">Layanan</a>
-                </li>
-                <li class="nav-item">
-    <a class="nav-link" href="/tracking">Lacak Pesanan</a>
-</li>
                 <li class="nav-item">
                     <a class="nav-link <?= str_starts_with($uri, '/pegawai/pelanggan') ? 'active' : '' ?>"
                         href="/pegawai/pelanggan">Pelanggan</a>
@@ -48,9 +44,13 @@ $uri = Request::uri();
                        href="/pegawai/jadwal">Jadwal</a>
                 </li>
                 <li class="nav-item">
-    <a class="nav-link <?= str_starts_with($uri, '/pegawai/workflow') ? 'active' : '' ?>"
-       href="/pegawai/workflow">Workflow</a>
-</li>
+                    <a class="nav-link <?= str_starts_with($uri, '/pegawai/workflow') ? 'active' : '' ?>"
+                        href="/pegawai/workflow">Workflow</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link <?= str_starts_with($uri, '/pegawai/transaksi') ? 'active' : '' ?>"
+                       href="/pegawai/transaksi">Transaksi</a>
+                </li>
             </ul>
 
             <div class="d-flex align-items-center gap-3">

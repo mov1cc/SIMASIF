@@ -74,4 +74,17 @@ class WorkflowLayanan extends Model
             [$status, $pegawaiId, $pemesananId]
         );
     }
+
+        /**
+     * Ubah status tanpa menyentuh pegawai_id (perubahan oleh pelanggan/sistem).
+     */
+    public function ubahStatusOtomatis(int $pemesananId, string $status): bool
+    {
+        return $this->execute(
+            "UPDATE pemesanan
+                SET status = CAST(? AS status_pemesanan)
+              WHERE id = ?",
+            [$status, $pemesananId]
+        );
+    }
 }
