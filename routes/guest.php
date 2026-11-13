@@ -31,3 +31,11 @@ $router->get('/pembayaran',         'Guest\PembayaranController@showForm', [
 $router->post('/pembayaran/upload', 'Guest\PembayaranController@uploadBukti', [
     KodeUnikMiddleware::class,
 ]);
+
+// File fotografi (Tahap 11)
+$router->post('/file/upload',  'Guest\FileFotografiController@upload', [
+    KodeUnikMiddleware::class,
+]);
+$router->get('/file/download', 'Guest\FileFotografiController@download', [
+    KodeUnikMiddleware::class,
+]);

@@ -57,3 +57,10 @@ $router->get('/pegawai/transaksi',          'Pegawai\TransaksiController@index',
 $router->get('/pegawai/transaksi/bukti',    'Pegawai\TransaksiController@bukti',  $pegawai);
 $router->post('/pegawai/transaksi/verify',  'Pegawai\TransaksiController@verify', $pegawai);
 $router->post('/pegawai/transaksi/reject',  'Pegawai\TransaksiController@reject', $pegawai);
+
+// File Fotografi (Tahap 11)
+$router->get('/pegawai/file',          'Pegawai\FileFotografiController@index',      $pegawai);
+$router->get('/pegawai/file/unduh',    'Pegawai\FileFotografiController@unduh',      $pegawai);
+$router->post('/pegawai/file/upload',  'Pegawai\FileFotografiController@uploadHasil', $pegawai);
+$router->post('/pegawai/file/toggle',  'Pegawai\FileFotografiController@toggle',     $pegawai);
+$router->post('/pegawai/file/delete',  'Pegawai\FileFotografiController@destroy',    $pegawai);

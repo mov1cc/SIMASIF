@@ -9,16 +9,19 @@ use App\Models\Pemesanan;
 use App\Models\WorkflowLayanan;
 use App\Services\KodeUnikService;
 use App\Services\WorkflowService;
+use App\Models\FileFotografi;
 
 class TrackingController extends Controller
 {
     private Pemesanan $pemesanan;
     private WorkflowLayanan $workflow;
+    private FileFotografi $files;
 
     public function __construct()
     {
         $this->pemesanan = new Pemesanan();
         $this->workflow  = new WorkflowLayanan();
+        $this->files     = new FileFotografi();
     }
 
     /**
@@ -46,12 +49,27 @@ class TrackingController extends Controller
             $this->redirect('/tracking');
         }
 
+        $semuaFile = $this->files->findByPemesanan((int) $row['id']);
+        $bolehUnduh = in_array($row['status'], FileFotografi::STATUS_BOLEH_UNDUH, true);
+
         $this->render('guest/tracking/status', [
-            'title'     => 'Status Pesanan',
-            'pemesanan' => $row,
-            'tahapan'   => WorkflowService::tahapan($row['status']),
-            'persen'    => WorkflowService::persen($row['status']),
-            'riwayat'   => $this->workflow->findByPemesanan((int) $row['id']),
+            'title'       => 'Status Pesanan',
+            'pemesanan'   => $row,
+            'tahapan'     => WorkflowService::tahapan($row['status']),
+            'persen'      => WorkflowService::persen($row['status']),
+            'riwayat'     => $this->workflow->findByPemesanan((int) $row['id']),
+            'referensi'   => array_values(array_filter(
+                $semuaFile,
+                fn ($f) => $f['jenis_file'] === FileFotografi::JENIS_REFERENSI
+            )),
+            'hasil'       => $bolehUnduh
+                ? array_values(array_filter(
+                    $semuaFile,
+                    fn ($f) => $f['jenis_file'] === FileFotografi::JENIS_HASIL
+                        && $f['status_file'] === FileFotografi::TERSEDIA
+                ))
+                : [],
+            'bolehUpload' => !$bolehUnduh,
         ]);
     }
 

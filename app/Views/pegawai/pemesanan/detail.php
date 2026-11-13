@@ -50,6 +50,11 @@ ob_start();
            class="btn btn-success">
             <i class="bi bi-whatsapp"></i> Hubungi via WhatsApp
         </a>
+
+                <a href="/pegawai/file?pemesanan_id=<?= (int) $p['id'] ?>"
+           class="btn btn-outline-dark">
+            <i class="bi bi-images"></i> File Fotografi
+        </a>
     </div>
 </div>
 

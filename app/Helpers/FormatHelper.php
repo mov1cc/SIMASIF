@@ -4,6 +4,22 @@ namespace App\Helpers;
 
 class FormatHelper
 {
+        /** 1536 -> "1,5 KB", 5242880 -> "5 MB" */
+    public static function ukuran(mixed $byte): string
+    {
+        $b = (float) $byte;
+
+        if ($b < 1024) {
+            return (int) $b . ' B';
+        }
+
+        if ($b < 1048576) {
+            return rtrim(rtrim(number_format($b / 1024, 1, ',', '.'), '0'), ',') . ' KB';
+        }
+
+        return rtrim(rtrim(number_format($b / 1048576, 1, ',', '.'), '0'), ',') . ' MB';
+    }
+
     /**
      * Format Rupiah: 250000 -> "Rp 250.000"
      * Desimal hanya tampil kalau memang ada (mis. 1500.50).

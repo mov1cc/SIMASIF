@@ -19,6 +19,14 @@ class UploadService
         'application/pdf' => 'pdf',
     ];
 
+        /** MIME file fotografi: gambar atau ZIP */
+    public const MIME_FOTO = [
+        'image/jpeg'      => 'jpg',
+        'image/png'       => 'png',
+        'image/webp'      => 'webp',
+        'application/zip' => 'zip',
+    ];
+
     /**
      * Validasi dan simpan satu file upload.
      *
@@ -104,6 +112,52 @@ class UploadService
             'ukuran'    => $ukuran,
             'mime'      => $mime,
         ];
+    }
+
+        /**
+     * Kirim file dari storage/ ke browser, lalu berhenti.
+     * Tipe dicek ulang dari isi file; nama unduhan dibersihkan.
+     *
+     * @param array<string,string> $mimeDiizinkan mime => ekstensi
+     */
+    public static function kirim(
+        string $path,
+        string $namaUnduh,
+        array $mimeDiizinkan,
+        bool $inline = false
+    ): never {
+        if (!is_file($path)) {
+            throw new \Exception('File tidak ditemukan di server.', 404);
+        }
+
+        $mime = (string) (new \finfo(FILEINFO_MIME_TYPE))->file($path);
+
+        if (!isset($mimeDiizinkan[$mime])) {
+            throw new \Exception('Tipe file tidak diizinkan.', 403);
+        }
+
+        // inline hanya untuk gambar
+        $inline = $inline && str_starts_with($mime, 'image/');
+
+        $namaUnduh = $namaUnduh !== '' ? $namaUnduh : 'file';
+        $fallback  = preg_replace('/[^A-Za-z0-9._-]/', '_', $namaUnduh) ?: 'file';
+
+        while (ob_get_level() > 0) {
+            ob_end_clean();
+        }
+
+        header('Content-Type: ' . $mime);
+        header('Content-Length: ' . filesize($path));
+        header(
+            'Content-Disposition: ' . ($inline ? 'inline' : 'attachment')
+            . '; filename="' . $fallback . '"'
+            . "; filename*=UTF-8''" . rawurlencode($namaUnduh)
+        );
+        header('X-Content-Type-Options: nosniff');
+        header('Cache-Control: private, no-store');
+
+        readfile($path);
+        exit;
     }
 
     /**

@@ -1,10 +1,19 @@
 <?php
 use App\Helpers\FormatHelper as F;
+use App\Helpers\CsrfHelper;
 
 /** @var array $pemesanan */
 /** @var array $tahapan */
 /** @var int   $persen */
 /** @var array $riwayat */
+/** @var array $referensi */
+/** @var array $hasil */
+/** @var bool  $bolehUpload */
+
+$scripts = [
+    '/assets/js/modules/tracking.js',
+    '/assets/js/modules/upload.js',
+];
 
 $title   = 'Status ' . $pemesanan['kode_unik'];
 $scripts = ['/assets/js/modules/tracking.js'];
@@ -117,12 +126,70 @@ ob_start();
             </div>
         </div>
 
-        <!-- Hasil foto (tombol unduh ditambahkan di Tahap 11) -->
+                <!-- File pendukung dari pelanggan -->
+        <div class="card shadow-sm mb-3">
+            <div class="card-header bg-white fw-semibold">File Pendukung (untuk editing)</div>
+            <div class="card-body">
+
+                <?php if (empty($referensi)): ?>
+                    <p class="text-muted small">Belum ada file yang Anda unggah.</p>
+                <?php else: ?>
+                    <ul class="list-group mb-3">
+                        <?php foreach ($referensi as $f): ?>
+                            <li class="list-group-item d-flex justify-content-between small">
+                                <span class="text-truncate me-2"><?= F::e($f['nama_file_asli']) ?></span>
+                                <span class="text-muted text-nowrap"><?= F::e(F::ukuran($f['ukuran_file'])) ?></span>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
+                <?php endif; ?>
+
+                <?php if ($bolehUpload): ?>
+                    <form action="/file/upload?kode=<?= F::e(urlencode($pemesanan['kode_unik'])) ?>"
+                          method="POST" enctype="multipart/form-data">
+                        <?= CsrfHelper::field() ?>
+
+                        <input type="file" name="berkas" class="form-control"
+                               accept="image/jpeg,image/png,image/webp,application/zip"
+                               data-upload-input data-maks-byte="<?= 10 * 1024 * 1024 ?>" required>
+                        <div class="form-text">JPG, PNG, WebP, atau ZIP. Maksimal 10 MB per file.</div>
+                        <div class="mt-2" data-upload-preview></div>
+
+                        <button type="submit" class="btn btn-dark btn-sm mt-2">
+                            <i class="bi bi-upload"></i> Unggah File
+                        </button>
+                    </form>
+                <?php else: ?>
+                    <p class="text-muted small mb-0">Pengunggahan file sudah ditutup karena hasil foto sudah siap.</p>
+                <?php endif; ?>
+
+            </div>
+        </div>
+
+        <!-- Hasil foto -->
         <div class="card shadow-sm mb-3">
             <div class="card-header bg-white fw-semibold">Hasil Foto</div>
             <div class="card-body">
-                <?php if ($hasilSiap): ?>
-                    <p class="mb-0"><i class="bi bi-check-circle text-success"></i> Hasil foto Anda sudah siap.</p>
+                <?php if (!empty($hasil)): ?>
+                    <ul class="list-group">
+                        <?php foreach ($hasil as $f): ?>
+                            <li class="list-group-item d-flex justify-content-between align-items-center gap-2">
+                                <div style="min-width:0">
+                                    <div class="text-truncate"><?= F::e($f['nama_file_asli']) ?></div>
+                                    <div class="small text-muted"><?= F::e(F::ukuran($f['ukuran_file'])) ?></div>
+                                </div>
+                                <a href="/file/download?kode=<?= F::e(urlencode($pemesanan['kode_unik'])) ?>&id=<?= (int) $f['id'] ?>"
+                                   class="btn btn-sm btn-dark text-nowrap">
+                                    <i class="bi bi-download"></i> Unduh
+                                </a>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
+                <?php elseif ($hasilSiap): ?>
+                    <p class="mb-0 text-muted">
+                        <i class="bi bi-hourglass-split"></i>
+                        Hasil foto sudah siap, file sedang disiapkan oleh studio.
+                    </p>
                 <?php else: ?>
                     <p class="text-muted mb-0">Hasil foto belum tersedia.</p>
                 <?php endif; ?>
