@@ -1,6 +1,9 @@
 <?php
+use App\Core\Request;
 use App\Core\Session;
 use App\Helpers\CsrfHelper;
+
+$uri = Request::uri();
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -9,12 +12,23 @@ use App\Helpers\CsrfHelper;
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= htmlspecialchars($title ?? 'Owner', ENT_QUOTES, 'UTF-8') ?> - SIMASIF</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <?php foreach (($styles ?? []) as $css): ?>
+        <link href="<?= htmlspecialchars($css, ENT_QUOTES, 'UTF-8') ?>" rel="stylesheet">
+    <?php endforeach; ?>
 </head>
 <body class="bg-light">
 
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container-fluid">
             <a class="navbar-brand" href="/owner/dashboard">SIMASIF Owner</a>
+
+            <ul class="navbar-nav me-auto flex-row gap-3">
+                <li class="nav-item">
+                    <a class="nav-link <?= $uri === '/owner/dashboard' ? 'active' : '' ?>"
+                       href="/owner/dashboard">Dashboard</a>
+                </li>
+            </ul>
 
             <div class="d-flex align-items-center gap-3">
                 <span class="text-white-50 small">
@@ -34,5 +48,8 @@ use App\Helpers\CsrfHelper;
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <?php foreach (($scripts ?? []) as $js): ?>
+        <script src="<?= htmlspecialchars($js, ENT_QUOTES, 'UTF-8') ?>"></script>
+    <?php endforeach; ?>
 </body>
 </html>
