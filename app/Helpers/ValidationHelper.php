@@ -57,6 +57,29 @@ class ValidationHelper
 
         return is_numeric($value) && (float) $value <= $limit;
     }
+    
+
+        /** Kembalikan Y-m-d kalau valid, selain itu string kosong */
+    public static function tanggalValid(mixed $raw): string
+    {
+        $v = is_scalar($raw) ? trim((string) $raw) : '';
+
+        if (preg_match('/^(\d{4})-(\d{2})-(\d{2})$/', $v, $m)
+            && checkdate((int) $m[2], (int) $m[3], (int) $m[1])
+        ) {
+            return $v;
+        }
+
+        return '';
+    }
+
+    /** Nomor telepon boleh kosong; kalau diisi: angka, +, -, spasi (8-20 karakter) */
+    public static function noTelepon(mixed $value): bool
+    {
+        $v = trim((string) $value);
+
+        return $v === '' || preg_match('/^[0-9+\-\s]{8,20}$/', $v) === 1;
+    }
 
     /**
      * Validasi sekumpulan field.

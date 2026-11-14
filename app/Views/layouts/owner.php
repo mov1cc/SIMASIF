@@ -19,7 +19,7 @@ $uri = Request::uri();
 </head>
 <body class="bg-light">
 
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-primary d-print-none">
         <div class="container-fluid">
             <a class="navbar-brand" href="/owner/dashboard">SIMASIF Owner</a>
 
@@ -27,6 +27,22 @@ $uri = Request::uri();
                 <li class="nav-item">
                     <a class="nav-link <?= $uri === '/owner/dashboard' ? 'active' : '' ?>"
                        href="/owner/dashboard">Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link <?= str_starts_with($uri, '/owner/laporan') ? 'active' : '' ?>"
+                       href="/owner/laporan/pemesanan">Laporan</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link <?= str_starts_with($uri, '/owner/audit-log') ? 'active' : '' ?>"
+                       href="/owner/audit-log">Audit Log</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link <?= str_starts_with($uri, '/owner/users') ? 'active' : '' ?>"
+                       href="/owner/users">Pegawai</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link <?= str_starts_with($uri, '/owner/profil') ? 'active' : '' ?>"
+                       href="/owner/profil">Profil</a>
                 </li>
             </ul>
 

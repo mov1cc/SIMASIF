@@ -9,6 +9,7 @@ use App\Helpers\CsrfHelper;
 use App\Models\TransaksiPembayaran;
 use App\Services\PembayaranService;
 use App\Services\UploadService;
+use App\Services\AuditLogService;
 
 class TransaksiController extends Controller
 {
@@ -45,19 +46,26 @@ class TransaksiController extends Controller
         ]);
     }
 
-    /**
+        /**
      * POST /pegawai/transaksi/verify
      */
     public function verify(): void
     {
         $this->verifyCsrf();
 
-        $hasil = $this->service->verifikasi(
-            (int) $this->postString('id'),
-            (int) Session::get('user_id')
-        );
+        $id = (int) $this->postString('id');
+        $t  = $this->transaksi->findDetail($id);
+
+        $hasil = $this->service->verifikasi($id, (int) Session::get('user_id'));
 
         if ($hasil['ok']) {
+            AuditLogService::log(AuditLogService::MODUL_PEMBAYARAN, 'Verifikasi pembayaran (lunas)', [
+                'transaksi_id' => $id,
+                'kode_unik'    => $t['kode_unik'] ?? null,
+                'jumlah_bayar' => $t['jumlah_bayar'] ?? null,
+                'metode'       => $t['metode_pembayaran'] ?? null,
+            ]);
+
             Session::flash('success', 'Pembayaran diverifikasi (lunas). Status pemesanan diperbarui otomatis.');
         } else {
             Session::flash('error', $hasil['error']);
@@ -73,12 +81,19 @@ class TransaksiController extends Controller
     {
         $this->verifyCsrf();
 
-        $hasil = $this->service->tolak(
-            (int) $this->postString('id'),
-            (int) Session::get('user_id')
-        );
+        $id = (int) $this->postString('id');
+        $t  = $this->transaksi->findDetail($id);
+
+        $hasil = $this->service->tolak($id, (int) Session::get('user_id'));
 
         if ($hasil['ok']) {
+            AuditLogService::log(AuditLogService::MODUL_PEMBAYARAN, 'Tolak pembayaran', [
+                'transaksi_id' => $id,
+                'kode_unik'    => $t['kode_unik'] ?? null,
+                'jumlah_bayar' => $t['jumlah_bayar'] ?? null,
+                'metode'       => $t['metode_pembayaran'] ?? null,
+            ]);
+
             Session::flash('success', 'Pembayaran ditolak. Pelanggan dapat mengirim ulang bukti.');
         } else {
             Session::flash('error', $hasil['error']);

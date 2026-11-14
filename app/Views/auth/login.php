@@ -65,6 +65,9 @@ ob_start();
                     </div>
 
                     <button type="submit" class="btn btn-primary w-100">Masuk</button>
+                    <div class="text-center mt-3">
+                        <a href="/forgot-password" class="small text-muted">Lupa password?</a>
+                    </div>
                 </form>
 
             </div>

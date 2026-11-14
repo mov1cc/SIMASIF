@@ -9,6 +9,7 @@ use App\Helpers\CsrfHelper;
 use App\Helpers\FormatHelper;
 use App\Models\Pemesanan;
 use App\Services\WorkflowService;
+use App\Services\AuditLogService;
 
 class WorkflowController extends Controller
 {
@@ -77,7 +78,17 @@ class WorkflowController extends Controller
             $catatan !== '' ? $catatan : null
         );
 
-        if ($hasil['ok']) {
+                if ($hasil['ok']) {
+            $p = $this->pemesanan->findDetail($id);
+
+            AuditLogService::log(AuditLogService::MODUL_WORKFLOW, 'Ubah status pemesanan', [
+                'pemesanan_id' => $id,
+                'kode_unik'    => $p['kode_unik'] ?? null,
+                'dari'         => $hasil['dari'],
+                'ke'           => $hasil['ke'],
+                'catatan'      => $catatan !== '' ? $catatan : null,
+            ]);
+
             Session::flash(
                 'success',
                 'Status berubah menjadi "' . FormatHelper::statusPemesanan($hasil['ke']) . '".'
