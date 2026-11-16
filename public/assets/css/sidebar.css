@@ -1,0 +1,279 @@
+:root {
+    --sf-sidebar-w: 260px;
+}
+
+.sf-shell {
+    display: flex;
+    min-height: 100vh;
+}
+
+.sf-main {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+/* ---------- Sidebar ---------- */
+.sf-sidebar {
+    display: flex;
+    flex-direction: column;
+    color: #fff;
+    background-color: #212529;
+}
+
+.sf-sidebar-owner {
+    background-color: #0d6efd;
+}
+
+.sf-sidebar-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .5rem;
+    padding: 1rem 1rem .75rem;
+}
+
+.sf-sidebar-body {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-height: 0;
+    padding: .75rem 1rem 1.25rem;
+    overflow-y: auto;
+}
+
+/* Brand (logo + teks) */
+.sf-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: .65rem;
+    min-width: 0;
+    color: #fff;
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: .02em;
+    text-decoration: none;
+}
+.sf-brand:hover { color: #fff; }
+
+.sf-logo {
+    flex: 0 0 auto;
+    width: 36px;
+    height: 36px;
+    object-fit: cover;
+    border-radius: .5rem;
+    border: 1px solid rgba(255, 255, 255, .25);
+}
+
+/* Tombol tutup sidebar */
+.sf-toggle {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border: 0;
+    border-radius: .5rem;
+    background: transparent;
+    color: rgba(255, 255, 255, .75);
+    font-size: 1.15rem;
+    transition: background-color .15s, color .15s;
+}
+.sf-toggle:hover {
+    color: #fff;
+    background-color: rgba(255, 255, 255, .12);
+}
+
+/* Label seksi */
+.sf-section {
+    padding: 0 .75rem;
+    margin-bottom: .5rem;
+    font-size: .7rem;
+    font-weight: 600;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, .5);
+}
+
+/* Menu */
+.sf-nav {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: .25rem;
+}
+
+.sf-link {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    padding: .65rem .75rem;
+    border-radius: .5rem;
+    color: rgba(255, 255, 255, .75);
+    font-size: .95rem;
+    line-height: 1.2;
+    text-decoration: none;
+    transition: background-color .15s, color .15s;
+}
+.sf-link i {
+    flex: 0 0 1.25rem;
+    font-size: 1.1rem;
+    text-align: center;
+}
+.sf-link:hover {
+    color: #fff;
+    background-color: rgba(255, 255, 255, .1);
+}
+.sf-link.active {
+    color: #fff;
+    font-weight: 600;
+    background-color: rgba(255, 255, 255, .18);
+}
+.sf-link.active::before {
+    content: "";
+    position: absolute;
+    left: -1rem;
+    top: 20%;
+    bottom: 20%;
+    width: 4px;
+    border-radius: 0 4px 4px 0;
+    background: #fff;
+}
+
+/* User (selalu di dasar sidebar) */
+.sf-user {
+    margin-top: auto;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, .2);
+}
+.sf-user-card {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    padding: .5rem .75rem;
+    margin-bottom: .75rem;
+    min-width: 0;
+}
+.sf-user-card > i {
+    flex: 0 0 auto;
+    font-size: 1.8rem;
+    line-height: 1;
+    color: rgba(255, 255, 255, .85);
+}
+.sf-user-info {
+    min-width: 0;
+    line-height: 1.2;
+}
+.sf-user-name {
+    font-size: .9rem;
+    font-weight: 600;
+    color: #fff;
+}
+.sf-user-role {
+    font-size: .75rem;
+    color: rgba(255, 255, 255, .6);
+}
+.sf-user .btn { padding: .45rem .75rem; }
+
+/* ---------- Topbar (hanya saat sidebar tertutup) ---------- */
+.sf-topbar {
+    display: none;
+    position: sticky;
+    top: 0;
+    z-index: 1020;
+    align-items: center;
+    padding: .55rem 1rem;
+    background: #fff;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.sf-topbar-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: .65rem;
+    padding: .2rem .35rem;
+    border: 0;
+    border-radius: .5rem;
+    background: transparent;
+    color: #212529;
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: .02em;
+}
+.sf-topbar-brand:hover { background-color: #f1f3f5; }
+.sf-topbar-brand .sf-logo { border-color: #dee2e6; }
+
+html.sf-collapsed .sf-topbar {
+    display: flex;
+}
+
+/* ---------- Backdrop (mobile) ---------- */
+.sf-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 1040;
+    background: rgba(0, 0, 0, .5);
+}
+
+/* ---------- Desktop ---------- */
+@media (min-width: 992px) {
+    .sf-sidebar {
+        position: sticky;
+        top: 0;
+        flex: 0 0 var(--sf-sidebar-w);
+        width: var(--sf-sidebar-w);
+        height: 100vh;
+    }
+
+    html.sf-ready .sf-sidebar {
+        transition: margin-left .25s ease, visibility 0s;
+    }
+
+    html.sf-collapsed .sf-sidebar {
+        margin-left: calc(-1 * var(--sf-sidebar-w));
+        visibility: hidden;
+    }
+
+    html.sf-ready.sf-collapsed .sf-sidebar {
+        transition: margin-left .25s ease, visibility 0s .25s;
+    }
+}
+
+/* ---------- Mobile / layar kecil ---------- */
+@media (max-width: 991.98px) {
+    .sf-sidebar {
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 1045;
+        width: min(var(--sf-sidebar-w), 85vw);
+    }
+
+    html.sf-ready .sf-sidebar {
+        transition: transform .25s ease, visibility 0s;
+    }
+
+    html.sf-collapsed .sf-sidebar {
+        transform: translateX(-100%);
+        visibility: hidden;
+    }
+
+    html.sf-ready.sf-collapsed .sf-sidebar {
+        transition: transform .25s ease, visibility 0s .25s;
+    }
+
+    /* Di layar kecil navbar selalu tampil */
+    .sf-topbar { display: flex; }
+
+    html:not(.sf-collapsed) .sf-backdrop { display: block; }
+    html:not(.sf-collapsed) body { overflow: hidden; }
+}
+
+@media print {
+    .sf-sidebar, .sf-topbar, .sf-backdrop { display: none !important; }
+}

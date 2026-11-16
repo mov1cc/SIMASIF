@@ -1,71 +1,67 @@
 <?php
-use App\Core\Request;
-use App\Core\Session;
-use App\Helpers\CsrfHelper;
+use App\Helpers\FormatHelper as F;
 
-$uri = Request::uri();
+$sbBrand = 'SIMASIF';
+$sbHome  = '/owner/dashboard';
+$sbTema  = 'owner';
+$sbMenu  = [
+    ['label' => 'Dashboard', 'href' => '/owner/dashboard',         'icon' => 'bi-speedometer2',   'match' => '/owner/dashboard', 'exact' => true],
+    ['label' => 'Laporan',   'href' => '/owner/laporan/pemesanan', 'icon' => 'bi-bar-chart-line', 'match' => '/owner/laporan'],
+    ['label' => 'Audit Log', 'href' => '/owner/audit-log',         'icon' => 'bi-shield-check',   'match' => '/owner/audit-log'],
+    ['label' => 'Pegawai',   'href' => '/owner/users',             'icon' => 'bi-person-badge',   'match' => '/owner/users'],
+    ['label' => 'Profil',    'href' => '/owner/profil',            'icon' => 'bi-person-gear',    'match' => '/owner/profil'],
+];
 ?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= htmlspecialchars($title ?? 'Owner', ENT_QUOTES, 'UTF-8') ?> - SIMASIF</title>
+    <title><?= F::e($title ?? 'Owner') ?> - SIMASIF</title>
+    <link rel="icon" href="/assets/images/logo.jpeg">
+
+    <!-- Terapkan keadaan sidebar sebelum halaman digambar (anti kedip) -->
+    <script>
+        (function () {
+            var tutup = true;
+            try {
+                if (window.innerWidth >= 992) {
+                    tutup = localStorage.getItem('sf_sidebar_collapsed') === '1';
+                }
+            } catch (e) {}
+            if (tutup) document.documentElement.classList.add('sf-collapsed');
+        })();
+    </script>
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="/assets/css/sidebar.css" rel="stylesheet">
     <?php foreach (($styles ?? []) as $css): ?>
-        <link href="<?= htmlspecialchars($css, ENT_QUOTES, 'UTF-8') ?>" rel="stylesheet">
+        <link href="<?= F::e($css) ?>" rel="stylesheet">
     <?php endforeach; ?>
 </head>
 <body class="bg-light">
 
-        <nav class="navbar navbar-expand-lg navbar-dark bg-primary d-print-none">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="/owner/dashboard">SIMASIF Owner</a>
+<div class="sf-shell">
 
-            <ul class="navbar-nav me-auto flex-row gap-3">
-                <li class="nav-item">
-                    <a class="nav-link <?= $uri === '/owner/dashboard' ? 'active' : '' ?>"
-                       href="/owner/dashboard">Dashboard</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link <?= str_starts_with($uri, '/owner/laporan') ? 'active' : '' ?>"
-                       href="/owner/laporan/pemesanan">Laporan</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link <?= str_starts_with($uri, '/owner/audit-log') ? 'active' : '' ?>"
-                       href="/owner/audit-log">Audit Log</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link <?= str_starts_with($uri, '/owner/users') ? 'active' : '' ?>"
-                       href="/owner/users">Pegawai</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link <?= str_starts_with($uri, '/owner/profil') ? 'active' : '' ?>"
-                       href="/owner/profil">Profil</a>
-                </li>
-            </ul>
+    <?php require dirname(__DIR__) . '/components/sidebar.php'; ?>
 
-            <div class="d-flex align-items-center gap-3">
-                <span class="text-white-50 small">
-                    <?= htmlspecialchars(Session::get('nama', ''), ENT_QUOTES, 'UTF-8') ?>
-                </span>
-                <form action="/logout" method="POST" class="m-0">
-                    <?= CsrfHelper::field() ?>
-                    <button type="submit" class="btn btn-sm btn-outline-light">Logout</button>
-                </form>
-            </div>
-        </div>
-    </nav>
+    <div class="sf-main">
 
-    <main class="container-fluid py-4">
-        <?php require dirname(__DIR__) . '/components/alert.php'; ?>
-        <?= $content ?? '' ?>
-    </main>
+        <?php require dirname(__DIR__) . '/components/sidebar-topbar.php'; ?>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <?php foreach (($scripts ?? []) as $js): ?>
-        <script src="<?= htmlspecialchars($js, ENT_QUOTES, 'UTF-8') ?>"></script>
-    <?php endforeach; ?>
+        <main class="container-fluid py-4">
+            <?php require dirname(__DIR__) . '/components/alert.php'; ?>
+            <?= $content ?? '' ?>
+        </main>
+
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/assets/js/modules/sidebar.js"></script>
+<?php foreach (($scripts ?? []) as $js): ?>
+    <script src="<?= F::e($js) ?>"></script>
+<?php endforeach; ?>
 </body>
 </html>
