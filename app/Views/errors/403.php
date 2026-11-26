@@ -35,7 +35,6 @@
         }
 
         h1 {
-            /* Menggunakan vw agar angka 403 membesar penuh mengikuti lebar layar */
             font-size: 38vw; 
             font-weight: 900;
             line-height: 0.8;
@@ -69,7 +68,7 @@
             color: #ffffff;
         }
 
-        /* Batas ukuran maksimum untuk layar monitor yang sangat lebar */
+        
         @media (min-width: 1600px) {
             h1 {
                 font-size: 550px;
